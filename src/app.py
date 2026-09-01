@@ -126,26 +126,26 @@ if df.empty:
 # No open-ended review text exists in this data, so sentiment here is a
 # proxy derived from order outcome, not an NLP model on templated strings.
 # ---------------------------------------------------------------------------
-SENTIMENT_MAP = {
-    "cancelled": "Negative", "canceled": "Negative", "returned": "Negative",
-    "refunded": "Negative", "return/refund": "Negative", "failed": "Negative",
-    "pending": "Neutral", "processing": "Neutral", "shipped": "Neutral",
-    "to ship": "Neutral", "to receive": "Neutral", "unpaid": "Neutral",
-    "completed": "Positive", "delivered": "Positive", "complete": "Positive",
-}
+# SENTIMENT_MAP = {
+#     "cancelled": "Negative", "canceled": "Negative", "returned": "Negative",
+#     "refunded": "Negative", "return/refund": "Negative", "failed": "Negative",
+#     "pending": "Neutral", "processing": "Neutral", "shipped": "Neutral",
+#     "to ship": "Neutral", "to receive": "Neutral", "unpaid": "Neutral",
+#     "completed": "Positive", "delivered": "Positive", "complete": "Positive",
+# }
 
 
-def classify_sentiment(status):
-    if pd.isna(status):
-        return "Unknown"
-    key = str(status).strip().lower()
-    for pattern, label in SENTIMENT_MAP.items():
-        if pattern in key:
-            return label
-    return "Unknown"
+# def classify_sentiment(status):
+#     if pd.isna(status):
+#         return "Unknown"
+#     key = str(status).strip().lower()
+#     for pattern, label in SENTIMENT_MAP.items():
+#         if pattern in key:
+#             return label
+#     return "Unknown"
 
 
-df["sentiment"] = df["status"].apply(classify_sentiment)
+# df["sentiment"] = df["status"].apply(classify_sentiment)
 
 # ---------------------------------------------------------------------------
 # SIDEBAR FILTERS
@@ -161,6 +161,7 @@ filtered = df[df["platform"] == platform]
 # Grand Total). Summing "revenue" across all line-item rows would multiply
 # it by the number of items per order. Deduplicating to one row per order
 # before summing avoids this double-count.
+
 orders_df = (
     filtered
     .dropna(subset=["order_id"])
@@ -217,47 +218,47 @@ st.plotly_chart(fig, use_container_width=True)
 # Website has no cancellation/return status, so it carries no sentiment
 # signal and is excluded here.
 # ---------------------------------------------------------------------------
-sentiment_scope = filtered[filtered["platform"] != "Website"]
+# sentiment_scope = filtered[filtered["platform"] != "Website"]
 
-if not sentiment_scope.empty and sentiment_scope["sentiment"].nunique() > 1:
-    st.divider()
-    st.header("Customer Sentiment")
-    st.caption(
-        "Shopee & Lazada only — proxy sentiment derived from order outcome "
-        "(Delivered = Positive, Cancelled/Returned = Negative, in-progress = Neutral)."
-    )
+# if not sentiment_scope.empty and sentiment_scope["sentiment"].nunique() > 1:
+#     st.divider()
+#     st.header("Customer Sentiment")
+#     st.caption(
+#         "Shopee & Lazada only — proxy sentiment derived from order outcome "
+#         "(Delivered = Positive, Cancelled/Returned = Negative, in-progress = Neutral)."
+#     )
 
-    color_map = {"Positive": "#2ca02c", "Neutral": "#ff7f0e", "Negative": "#d62728", "Unknown": "#7f7f7f"}
-    sc1, sc2 = st.columns([1, 2])
+#     color_map = {"Positive": "#2ca02c", "Neutral": "#ff7f0e", "Negative": "#d62728", "Unknown": "#7f7f7f"}
+#     sc1, sc2 = st.columns([1, 2])
 
-    with sc1:
-        st.subheader("Sentiment Breakdown")
-        sent_counts = sentiment_scope["sentiment"].value_counts().reset_index()
-        sent_counts.columns = ["sentiment", "orders"]
-        fig = px.pie(sent_counts, names="sentiment", values="orders", hole=0.4,
-                     color="sentiment", color_discrete_map=color_map)
-        st.plotly_chart(fig, use_container_width=True)
+#     with sc1:
+#         st.subheader("Sentiment Breakdown")
+#         sent_counts = sentiment_scope["sentiment"].value_counts().reset_index()
+#         sent_counts.columns = ["sentiment", "orders"]
+#         fig = px.pie(sent_counts, names="sentiment", values="orders", hole=0.4,
+#                      color="sentiment", color_discrete_map=color_map)
+#         st.plotly_chart(fig, use_container_width=True)
 
-    with sc2:
-        st.subheader("Sentiment by Platform")
-        sent_by_platform = sentiment_scope.groupby(["platform", "sentiment"], as_index=False)["order_id"].nunique()
-        sent_by_platform.columns = ["platform", "sentiment", "orders"]
-        fig = px.bar(sent_by_platform, x="platform", y="orders", color="sentiment",
-                     barmode="stack", color_discrete_map=color_map)
-        st.plotly_chart(fig, use_container_width=True)
+#     with sc2:
+#         st.subheader("Sentiment by Platform")
+#         sent_by_platform = sentiment_scope.groupby(["platform", "sentiment"], as_index=False)["order_id"].nunique()
+#         sent_by_platform.columns = ["platform", "sentiment", "orders"]
+#         fig = px.bar(sent_by_platform, x="platform", y="orders", color="sentiment",
+#                      barmode="stack", color_discrete_map=color_map)
+#         st.plotly_chart(fig, use_container_width=True)
 
-    neg = sentiment_scope[(sentiment_scope["sentiment"] == "Negative") & (sentiment_scope["customer_key"].notna())]
-    neg_by_customer = (
-        neg.groupby(["platform", "customer_key"], as_index=False)["order_id"]
-        .nunique()
-        .rename(columns={"order_id": "negative_orders"})
-    )
-    neg_by_customer = neg_by_customer[neg_by_customer["negative_orders"] > 1].sort_values(
-        "negative_orders", ascending=False
-    )
-    if not neg_by_customer.empty:
-        st.subheader("Repeat Customers with Negative Outcomes")
-        st.dataframe(neg_by_customer.head(15), use_container_width=True, hide_index=True)
+#     neg = sentiment_scope[(sentiment_scope["sentiment"] == "Negative") & (sentiment_scope["customer_key"].notna())]
+#     neg_by_customer = (
+#         neg.groupby(["platform", "customer_key"], as_index=False)["order_id"]
+#         .nunique()
+#         .rename(columns={"order_id": "negative_orders"})
+#     )
+#     neg_by_customer = neg_by_customer[neg_by_customer["negative_orders"] > 1].sort_values(
+#         "negative_orders", ascending=False
+#     )
+#     if not neg_by_customer.empty:
+#         st.subheader("Repeat Customers with Negative Outcomes")
+#         st.dataframe(neg_by_customer.head(15), use_container_width=True, hide_index=True)
 
 # ---------------------------------------------------------------------------
 # ROW 3 — Top Repeat Purchasers (all platforms)
