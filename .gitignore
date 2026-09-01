@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Reports / analysis outputs
+reports/
+data/analysis/
+
+# Local analysis scripts - not needed by Streamlit
+src/analyze.py
+src/clean.py
+src/profile.py
+src/testing.py
+src/validate.py
+src/checkrevenue.py
+src/lazadatest.py
+
+# Raw source data
+data/raw/
