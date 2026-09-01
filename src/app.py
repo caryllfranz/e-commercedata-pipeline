@@ -174,13 +174,16 @@ st.title("Data Engineering Assessment")
 # st.caption("Website + Shopee + Lazada — unified order overview")
 
 total_orders = orders_df.shape[0]
-total_revenue = orders_df["revenue"].sum()
-avg_order_value = total_revenue / total_orders if total_orders else 0
+gross_sales = orders_df["revenue"].sum()
+avg_order_value = gross_sales / total_orders if total_orders else 0
 
 col1, col2, col3 = st.columns(3)
 col1.metric("Total Orders", f"{total_orders:,}")
-col2.metric("Total Revenue", f"₱{total_revenue:,.2f}")
+col2.metric("Gross Sales", f"₱{gross_sales:,.2f}")
 col3.metric("Avg Order Value", f"₱{avg_order_value:,.2f}")
+
+
+
 
 st.divider()
 
