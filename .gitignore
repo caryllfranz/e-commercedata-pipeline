@@ -17,6 +17,10 @@ src/testing.py
 src/validate.py
 src/checkrevenue.py
 src/lazadatest.py
+src/correct_format.py
 
 # Raw source data
 data/raw/
+data/testing
+
+

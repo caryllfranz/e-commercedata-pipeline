@@ -1,11 +1,4 @@
-"""
-E-commerce Multi-platform Dashboard
-Combines Website, Shopee, and Lazada order data into one view.
 
-Run with:
-    pip install streamlit pandas plotly openpyxl
-    streamlit run app.py
-"""
 
 import pathlib
 
